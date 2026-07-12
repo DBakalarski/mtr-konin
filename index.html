@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MTR Premium Service — Serwis mechaniczny klasy premium | Konin</title>
+  <meta name="description" content="MTR Premium Service Konin — geometria kół Hunter 3D, wyważanie z testem drogowym Hunter Road Force Elite, serwis klimatyzacji MAHLE, diagnostyka Hella Gutmann, naprawy mechaniczne i powypadkowe. Rozliczenia bezgotówkowe. Tel. 601 556 560.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Saira:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <noscript>
+    <style>
+      .intro { display: none; }
+      [data-hero], [data-reveal] { opacity: 1 !important; transform: none !important; }
+      .line-mask [data-hero] { transform: none !important; }
+    </style>
+  </noscript>
+</head>
+<body>
+
+  <!-- ══════════ INTRO ══════════ -->
+  <div class="intro" id="intro" aria-hidden="true">
+    <div class="intro__inner">
+      <img src="assets/logo.svg" alt="" class="intro__logo">
+      <div class="intro__line"><span></span></div>
+      <p class="intro__tag">PREMIUM SERVICE — KONIN</p>
+    </div>
+  </div>
+
+  <!-- ══════════ NAV ══════════ -->
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="#top" class="nav__brand" aria-label="MTR Premium Service — strona główna">
+        <img src="assets/logo.svg" alt="MTR Premium Service" class="nav__logo">
+      </a>
+      <nav class="nav__links" aria-label="Nawigacja główna">
+        <a href="#uslugi">Usługi</a>
+        <a href="#technologia">Technologia</a>
+        <a href="#atuty">Dlaczego my</a>
+        <a href="#kontakt">Kontakt</a>
+      </nav>
+      <a href="tel:+48601556560" class="btn btn--red nav__cta" data-magnetic>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        601 556 560
+      </a>
+      <button class="nav__burger" id="burger" aria-label="Otwórz menu" aria-expanded="false">
+        <span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <a href="#uslugi">Usługi</a>
+    <a href="#technologia">Technologia</a>
+    <a href="#atuty">Dlaczego my</a>
+    <a href="#kontakt">Kontakt</a>
+    <a href="tel:+48601556560" class="btn btn--red">Zadzwoń: 601 556 560</a>
+  </div>
+
+  <main id="top">
+
+    <!-- ══════════ HERO ══════════ -->
+    <section class="hero">
+      <div class="hero__bg" aria-hidden="true">
+        <div class="hero__grid"></div>
+        <div class="hero__glow"></div>
+      </div>
+
+      <div class="hero__content">
+        <p class="hero__eyebrow" data-hero="1"><span class="tick"></span>SERWIS MECHANICZNY · KONIN, UL. ŚLESIŃSKA 29</p>
+        <h1 class="hero__title">
+          <span class="line-mask"><span data-hero="2">Precyzja,</span></span>
+          <span class="line-mask"><span data-hero="3">którą <em>poczujesz</em></span></span>
+          <span class="line-mask"><span data-hero="4">za kierownicą.</span></span>
+        </h1>
+        <p class="hero__sub" data-hero="5">
+          Diagnozujemy to, czego nie wykryje zwykły warsztat.
+          Pracujemy wyłącznie na sprzęcie klasy premium — Hunter, MAHLE,
+          Hella Gutmann, Cartec — bo Twoje auto zasługuje na pomiar, nie na zgadywanie.
+        </p>
+        <div class="hero__cta" data-hero="6">
+          <a href="tel:+48601556560" class="btn btn--red btn--lg" data-magnetic>Umów wizytę</a>
+          <a href="#uslugi" class="btn btn--ghost btn--lg" data-magnetic>Zakres serwisu</a>
+        </div>
+      </div>
+
+      <div class="hero__wave" data-hero="7">
+        <canvas id="waveHero" aria-hidden="true"></canvas>
+        <div class="hero__readout" aria-hidden="true">
+          <span class="ro"><b>ROAD FORCE</b> TEST DROGOWY · AKTYWNY</span>
+          <span class="ro"><b>DRGANIA</b> <span id="roVib">0.42</span> g → 0.00 g</span>
+          <span class="ro ro--hide-m"><b>GEOMETRIA</b> HUNTER 3D</span>
+          <span class="ro ro--hide-m"><b>CZYNNIK</b> R1234yf</span>
+        </div>
+      </div>
+
+      <a class="hero__scroll" href="#marki" aria-label="Przewiń niżej"><span></span></a>
+    </section>
+
+    <!-- ══════════ MARQUEE ══════════ -->
+    <section class="marquee" id="marki" aria-label="Sprzęt, na którym pracujemy">
+      <div class="marquee__track" id="marqueeTrack">
+        <div class="marquee__group">
+          <span>Hunter</span><i>◆</i>
+          <span>MAHLE</span><i>◆</i>
+          <span>Hella Gutmann</span><i>◆</i>
+          <span>Cartec</span><i>◆</i>
+          <span>PRO CUT</span><i>◆</i>
+          <span>Haweka</span><i>◆</i>
+          <span>Magneti Marelli</span><i>◆</i>
+          <span>GTO Laser</span><i>◆</i>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ USŁUGI ══════════ -->
+    <section class="section services" id="uslugi">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <p class="eyebrow">/ ZAKRES SERWISU</p>
+          <h2 class="section__title">Kompleksowa opieka<br>nad Twoim autem</h2>
+          <p class="section__lead">Każda usługa oparta o specjalistyczne urządzenie — nazwy sprzętu podajemy wprost, bo nie mamy nic do ukrycia.</p>
+        </header>
+
+        <div class="services__grid">
+          <article class="card" data-reveal style="--i:0">
+            <div class="card__top">
+              <h3>Geometria kół 3D</h3>
+              <svg class="card__ico" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M16 5v22M5 16h22M8.5 8.5l15 15M23.5 8.5l-15 15" stroke="currentColor" stroke-width="1" opacity=".45"/></svg>
+            </div>
+            <p>Pomiar i regulacja geometrii w technologii 3D. Auto prowadzi się pewnie i przewidywalnie, a opony zużywają się równomiernie.</p>
+            <div class="card__tags"><span>HUNTER 3D</span><span>GTO LASER</span></div>
+          </article>
+
+          <article class="card" data-reveal style="--i:1">
+            <div class="card__top">
+              <h3>Wyważanie z testem drogowym</h3>
+              <svg class="card__ico" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="16" cy="16" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M16 5v6M16 21v6M5 16h6M21 16h6" stroke="currentColor" stroke-width="1" opacity=".45"/></svg>
+            </div>
+            <p>Wyważanie kół samochodowych i motocyklowych z symulacją rzeczywistego nacisku drogi. Koniec z drganiami kierownicy.</p>
+            <div class="card__tags"><span>HUNTER ROAD FORCE ELITE</span><span>HAWEKA BIKEBOSS</span></div>
+          </article>
+
+          <article class="card" data-reveal style="--i:2">
+            <div class="card__top">
+              <h3>Serwis klimatyzacji</h3>
+              <svg class="card__ico" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4v24M16 16l9-5.2M16 16L7 10.8M16 16l9 5.2M16 16l-9 5.2M12 6.5l4 2.5 4-2.5M12 25.5l4-2.5 4 2.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            <p>Pełny serwis układu klimatyzacji — również z czynnikiem R1234yf. Wydajnie, szczelnie i bezpiecznie, na sprzęcie MAHLE.</p>
+            <div class="card__tags"><span>MAHLE ATX 480</span><span>MAGNETI MARELLI</span></div>
+          </article>
+
+          <article class="card" data-reveal style="--i:3">
+            <div class="card__top">
+              <h3>Diagnostyka komputerowa</h3>
+              <svg class="card__ico" viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="7" width="22" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M9 14h3l2-4 3 8 2-4h4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M12 25h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <p>Profesjonalna diagnostyka wszystkich układów pojazdu. Szukamy przyczyny, nie objawu — zanim zapali się kolejna kontrolka.</p>
+            <div class="card__tags"><span>HELLA GUTMANN</span></div>
+          </article>
+
+          <article class="card" data-reveal style="--i:4">
+            <div class="card__top">
+              <h3>Dynamiczna wymiana oleju w automacie</h3>
+              <svg class="card__ico" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4c4.5 6 8 9.6 8 14a8 8 0 1 1-16 0c0-4.4 3.5-8 8-14z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M12 19a4 4 0 0 0 4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            <p>Pełna wymiana oleju w skrzyni automatycznej z płukaniem układu i wymianą filtra. Płynniejsze zmiany biegów, dłuższe życie skrzyni.</p>
+            <div class="card__tags"><span>MAHLE ATX 280</span></div>
+          </article>
+
+          <article class="card" data-reveal style="--i:5">
+            <div class="card__top">
+              <h3>Test zawieszenia</h3>
+              <svg class="card__ico" viewBox="0 0 32 32" aria-hidden="true"><path d="M10 4v3a3 3 0 0 0 6 0V4M13 10c-3 2-3 4 0 6s3 4 0 6-3 4 0 6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M22 8v16M19 24h6M19 8h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <p>Szarpaki i test amortyzacji na urządzeniu Cartec. Obiektywna ocena stanu zawieszenia, zanim usterka stanie się kosztowna.</p>
+            <div class="card__tags"><span>CARTEC</span></div>
+          </article>
+
+          <article class="card" data-reveal style="--i:6">
+            <div class="card__top">
+              <h3>Układ hamulcowy</h3>
+              <svg class="card__ico" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="16" cy="16" r="6" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="16" cy="16" r="1.6" fill="currentColor"/><path d="M16 7.5v3M16 21.5v3M7.5 16h3M21.5 16h3" stroke="currentColor" stroke-width="1.2" opacity=".5"/></svg>
+            </div>
+            <p>Test skuteczności hamowania na rolkach oraz przetaczanie tarcz bezpośrednio na pojeździe, z kompensacją bicia piasty.</p>
+            <div class="card__tags"><span>CARTEC</span><span>PRO CUT</span></div>
+          </article>
+
+          <article class="card" data-reveal style="--i:7">
+            <div class="card__top">
+              <h3>Naprawy mechaniczne</h3>
+              <svg class="card__ico" viewBox="0 0 32 32" aria-hidden="true"><path d="M20 5a6.5 6.5 0 0 0-6.9 9L5 22.2A2.6 2.6 0 1 0 8.7 26l8.2-8.1A6.5 6.5 0 0 0 26 11l-3.6 3.5-3.9-1-1-3.9L21 6a6 6 0 0 0-1-.9z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>
+            </div>
+            <p>Silniki, skrzynie, zawieszenie, hamulce — kompleksowe naprawy mechaniczne oraz powypadkowe, z rozliczeniem bezgotówkowym.</p>
+            <div class="card__tags"><span>POWYPADKOWE</span><span>BEZGOTÓWKOWO</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ TECHNOLOGIA ══════════ -->
+    <section class="section tech" id="technologia">
+      <div class="container tech__wrap">
+        <div class="tech__sticky">
+          <p class="eyebrow" data-reveal>/ TECHNOLOGIA</p>
+          <h2 class="section__title" data-reveal>Hunter<br>Road Force<br><span class="chrome">Elite</span></h2>
+          <p class="section__lead" data-reveal>Jedna z najdokładniejszych technologii diagnostyki kół na świecie. Rozwiązanie, z którego korzystają profesjonalne serwisy i wymagający kierowcy.</p>
+          <div class="tech__meter" data-reveal>
+            <canvas id="waveTech" aria-hidden="true"></canvas>
+            <p class="tech__meter-label"><span class="mono">DRGANIA:</span> <b class="mono" id="techVib">0.48 g</b> <span class="mono" id="techState">— WYKRYTO BICIE</span></p>
+          </div>
+        </div>
+
+        <ol class="tech__steps">
+          <li class="tech-step" data-reveal>
+            <span class="tech-step__no mono">RF·01</span>
+            <h3>Symulacja rzeczywistej drogi</h3>
+            <p>Rolka dociska koło z siłą odpowiadającą realnej jeździe. Standardowa wyważarka kręci kołem w powietrzu — my sprawdzamy je pod obciążeniem.</p>
+          </li>
+          <li class="tech-step" data-reveal>
+            <span class="tech-step__no mono">RF·02</span>
+            <h3>Wykrycie niewidocznych wad</h3>
+            <p>Najmniejsze nierówności opony i felgi, bicie pojawiające się tylko przy konkretnych prędkościach, ukryte przyczyny pogorszonego komfortu.</p>
+          </li>
+          <li class="tech-step" data-reveal>
+            <span class="tech-step__no mono">RF·03</span>
+            <h3>Idealne dopasowanie opony do felgi</h3>
+            <p>System wskazuje optymalne ułożenie opony względem felgi. Nawet nowe opony potrafią generować drgania — sama wymiana nie zawsze rozwiązuje problem.</p>
+          </li>
+          <li class="tech-step" data-reveal>
+            <span class="tech-step__no mono">RF·04</span>
+            <h3>Efekt, który poczujesz</h3>
+            <p>Brak drgań przy wyższych prędkościach, większy komfort i stabilność, mniejsze zużycie opon i zawieszenia. Różnica, której nie zobaczysz na zwykłej wyważarce — ale poczujesz za kierownicą.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ══════════ ATUTY / STATY ══════════ -->
+    <section class="section stats" id="atuty">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <p class="eyebrow">/ DLACZEGO MTR</p>
+          <h2 class="section__title">Sprzęt, nie obietnice</h2>
+        </header>
+        <div class="stats__grid">
+          <div class="stat" data-reveal style="--i:0">
+            <p class="stat__num chrome"><span data-count="10">0</span></p>
+            <p class="stat__label">urządzeń klasy premium — Hunter, MAHLE, Hella Gutmann, Cartec, PRO CUT, Haweka</p>
+          </div>
+          <div class="stat" data-reveal style="--i:1">
+            <p class="stat__num chrome"><span data-count="8">0</span></p>
+            <p class="stat__label">obszarów serwisu — od geometrii i klimatyzacji po naprawy powypadkowe</p>
+          </div>
+          <div class="stat" data-reveal style="--i:2">
+            <p class="stat__num chrome"><span data-count="100">0</span>%</p>
+            <p class="stat__label">rozliczeń powypadkowych możesz przeprowadzić bezgotówkowo, bez formalności po Twojej stronie</p>
+          </div>
+        </div>
+
+        <div class="banner" data-reveal>
+          <div class="banner__text">
+            <h3>Naprawy powypadkowe i rozliczenia bezgotówkowe</h3>
+            <p>Miałeś kolizję? Zajmiemy się autem i formalnościami z ubezpieczycielem. Ty odbierasz sprawne auto — my resztę bierzemy na siebie.</p>
+          </div>
+          <a href="tel:+48601556560" class="btn btn--red btn--lg" data-magnetic>Zadzwoń teraz</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ KONTAKT ══════════ -->
+    <section class="section contact" id="kontakt">
+      <div class="container contact__wrap">
+        <div class="contact__info">
+          <p class="eyebrow" data-reveal>/ KONTAKT</p>
+          <h2 class="section__title" data-reveal>Umów wizytę<br>już dziś</h2>
+          <a href="tel:+48601556560" class="contact__phone chrome" data-reveal>601 556 560</a>
+          <address class="contact__addr" data-reveal>
+            <p><span class="mono">ADRES</span>ul. Ślesińska 29, 62-510 Konin</p>
+            <p><span class="mono">TELEFON</span><a href="tel:+48601556560">601 556 560</a></p>
+            <p><span class="mono">PROFIL</span><a href="https://www.facebook.com" target="_blank" rel="noopener">MTR Premium Service na Facebooku</a></p>
+          </address>
+          <div class="hero__cta" data-reveal>
+            <a href="tel:+48601556560" class="btn btn--red btn--lg" data-magnetic>Zadzwoń</a>
+            <a href="https://maps.google.com/?q=%C5%9Alesi%C5%84ska+29,+62-510+Konin" target="_blank" rel="noopener" class="btn btn--ghost btn--lg" data-magnetic>Wyznacz trasę</a>
+          </div>
+        </div>
+        <div class="contact__map" data-reveal>
+          <iframe
+            src="https://www.google.com/maps?q=%C5%9Alesi%C5%84ska%2029%2C%2062-510%20Konin&z=15&output=embed"
+            loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+            title="Mapa dojazdu — MTR Premium Service, ul. Ślesińska 29, Konin"></iframe>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ══════════ FOOTER ══════════ -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <img src="assets/logo.svg" alt="MTR Premium Service" class="footer__logo">
+      <p class="footer__copy mono">© 2026 MTR PREMIUM SERVICE · KONIN, UL. ŚLESIŃSKA 29 · 601 556 560</p>
+      <a href="#top" class="footer__up" aria-label="Wróć na górę">↑</a>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
