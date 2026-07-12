@@ -10,19 +10,6 @@
   const INTRO_MS = reduceMotion ? 0 : 2050;
   setTimeout(() => document.body.classList.add("intro-done"), INTRO_MS);
 
-  /* intro percent counter — calibration readout */
-  const introPct = document.getElementById("introPct");
-  if (introPct && !reduceMotion) {
-    const t0 = performance.now();
-    const dur = 1450;
-    const tick = (t) => {
-      const p = Math.min((t - t0) / dur, 1);
-      introPct.textContent = Math.round((1 - Math.pow(1 - p, 3)) * 100) + "%";
-      if (p < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  }
-
   /* ── nav: glass on scroll, hide on scroll down ─────────── */
   const nav = document.getElementById("nav");
   let lastY = 0;
@@ -59,41 +46,22 @@
   );
   document.querySelectorAll("[data-reveal]").forEach((el) => revealIO.observe(el));
 
-  /* ── odometer stats: digits roll into place ────────────── */
-  const buildOdometer = (el) => {
-    const digits = String(el.dataset.count);
-    el.textContent = "";
-    el.classList.add("odo");
-    const strips = [];
-    for (const ch of digits) {
-      const col = document.createElement("span");
-      col.className = "odo-col";
-      const strip = document.createElement("span");
-      strip.className = "odo-strip";
-      for (let d = 0; d <= 9; d++) {
-        const s = document.createElement("span");
-        s.textContent = d;
-        strip.appendChild(s);
-      }
-      col.appendChild(strip);
-      el.appendChild(col);
-      strips.push([strip, +ch]);
-    }
-    return strips;
-  };
+  /* ── animated counters ─────────────────────────────────── */
   const countIO = new IntersectionObserver(
     (entries) => entries.forEach((e) => {
       if (!e.isIntersecting) return;
       countIO.unobserve(e.target);
       const el = e.target;
-      if (reduceMotion) { el.textContent = el.dataset.count; return; }
-      const strips = buildOdometer(el);
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        strips.forEach(([strip, d], i) => {
-          strip.style.transitionDelay = `${i * 140}ms`;
-          strip.style.transform = `translateY(calc(${-d} * 1.12em))`;
-        });
-      }));
+      const target = +el.dataset.count;
+      if (reduceMotion) { el.textContent = target; return; }
+      const t0 = performance.now();
+      const dur = 1600;
+      const step = (t) => {
+        const p = Math.min((t - t0) / dur, 1);
+        el.textContent = Math.round(target * (1 - Math.pow(1 - p, 4)));
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
     }),
     { threshold: 0.6 }
   );
@@ -129,82 +97,6 @@
     });
     card.addEventListener("mouseleave", () => { card.style.transform = ""; });
   });
-
-  /* ── custom cursor: red dot + trailing chrome ring ─────── */
-  if (fine && !reduceMotion) {
-    const dot = document.createElement("div");
-    const ring = document.createElement("div");
-    dot.className = "cursor-dot";
-    ring.className = "cursor-ring";
-    dot.style.opacity = ring.style.opacity = "0";
-    document.body.append(dot, ring);
-    document.body.classList.add("cursor-active");
-    let mx = -100, my = -100, rx = -100, ry = -100;
-    window.addEventListener("mousemove", (e) => {
-      mx = e.clientX; my = e.clientY;
-      dot.style.opacity = ring.style.opacity = "1";
-      ring.classList.toggle("on", !!e.target.closest("a, button"));
-    }, { passive: true });
-    document.documentElement.addEventListener("mouseleave", () => {
-      dot.style.opacity = ring.style.opacity = "0";
-    });
-    const follow = () => {
-      rx += (mx - rx) * 0.16;
-      ry += (my - ry) * 0.16;
-      dot.style.transform = `translate(${mx - 3}px, ${my - 3}px)`;
-      ring.style.transform = `translate(${rx - 17}px, ${ry - 17}px)`;
-      requestAnimationFrame(follow);
-    };
-    requestAnimationFrame(follow);
-  }
-
-  /* ── hero mouse parallax: layers drift with the cursor ── */
-  if (fine && !reduceMotion) {
-    const hero = document.querySelector(".hero");
-    const layers = [
-      [document.querySelector(".hero__grid"), 14],
-      [document.querySelector(".hero__glow"), 34],
-      [document.querySelector(".hero__content"), 7],
-    ].filter(([el]) => el);
-    hero.addEventListener("mousemove", (e) => {
-      const r = hero.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width - 0.5;
-      const py = (e.clientY - r.top) / r.height - 0.5;
-      layers.forEach(([el, depth]) => {
-        el.style.transform = `translate(${(-px * depth).toFixed(1)}px, ${(-py * depth).toFixed(1)}px)`;
-      });
-    }, { passive: true });
-    hero.addEventListener("mouseleave", () => {
-      layers.forEach(([el]) => { el.style.transform = ""; });
-    });
-  }
-
-  /* ── scroll rail: highlight the section on screen ──────── */
-  const rail = document.getElementById("rail");
-  if (rail) {
-    const links = new Map(
-      [...rail.querySelectorAll("a")].map((a) => [a.dataset.section, a])
-    );
-    const railIO = new IntersectionObserver(
-      (entries) => entries.forEach((e) => {
-        if (!e.isIntersecting) return;
-        links.forEach((a) => a.classList.remove("active"));
-        const link = links.get(e.target.dataset.rail);
-        if (link) link.classList.add("active");
-      }),
-      { rootMargin: "-45% 0px -45% 0px" }
-    );
-    [["top", document.querySelector(".hero")],
-     ["uslugi", document.getElementById("uslugi")],
-     ["technologia", document.getElementById("technologia")],
-     ["atuty", document.getElementById("atuty")],
-     ["kontakt", document.getElementById("kontakt")]]
-      .forEach(([key, el]) => {
-        if (!el) return;
-        el.dataset.rail = key;
-        railIO.observe(el);
-      });
-  }
 
   /* ═══════════ SIGNATURE: Road Force waveform ═══════════
      The story every canvas tells: measure → correct → balanced.
