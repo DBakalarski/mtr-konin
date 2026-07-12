@@ -675,6 +675,7 @@ body.intro-done .line-mask [data-hero] {
   font-size: clamp(52px, 6vw, 84px);
   line-height: 1;
   margin-bottom: 14px;
+  white-space: nowrap;
 }
 .stat__label { color: var(--muted); font-size: 15px; max-width: 300px; }
 
@@ -764,6 +765,155 @@ body.intro-done .line-mask [data-hero] {
   transition: color 250ms, border-color 250ms, transform 250ms var(--ease-out);
 }
 .footer__up:hover { color: #fff; border-color: rgba(233,235,239,0.4); transform: translateY(-3px); }
+
+/* ═══════════ PREMIUM+ ═══════════ */
+
+/* film grain — the "expensive" texture */
+.grain {
+  position: fixed;
+  inset: -60%;
+  width: 220%;
+  height: 220%;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+  animation: grainShift 700ms steps(4) infinite;
+}
+@keyframes grainShift {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2%, 1.4%); }
+  50% { transform: translate(1.6%, -1%); }
+  75% { transform: translate(-1%, -1.8%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* intro progress */
+.intro__pct {
+  margin-top: 14px;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--text);
+  animation: introLogo 900ms var(--ease-out) 350ms both;
+}
+
+/* custom cursor (desktop only, created by JS) */
+.cursor-dot, .cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 70;
+}
+.cursor-dot {
+  width: 6px; height: 6px;
+  background: var(--red);
+  box-shadow: 0 0 10px var(--red-glow);
+}
+.cursor-ring {
+  width: 34px; height: 34px;
+  border: 1px solid rgba(233, 235, 239, 0.3);
+  transition: width 250ms var(--ease-out), height 250ms var(--ease-out),
+              border-color 250ms, opacity 250ms;
+}
+.cursor-ring.on {
+  width: 58px; height: 58px;
+  border-color: rgba(213, 0, 28, 0.8);
+}
+body.cursor-active, body.cursor-active a, body.cursor-active button { cursor: none; }
+
+/* periodic chrome glint sweeping across metallic text */
+.chrome, .hero__title em {
+  background-size: 220% 100%;
+  background-position: 0% 0;
+  animation: chromeGlint 7s var(--ease-in-out) 3s infinite;
+}
+@keyframes chromeGlint {
+  0%, 55% { background-position: 0% 0; }
+  85%, 100% { background-position: -120% 0; }
+}
+
+/* scroll rail — section progress (desktop) */
+.rail {
+  position: fixed;
+  right: 26px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 45;
+  display: none;
+  flex-direction: column;
+  gap: 22px;
+}
+@media (min-width: 1280px) { .rail { display: flex; } }
+.rail a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-direction: row-reverse;
+}
+.rail i {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgba(233, 235, 239, 0.22);
+  transition: background-color 300ms, box-shadow 300ms, transform 300ms var(--ease-out);
+}
+.rail span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0;
+  transform: translateX(6px);
+  transition: opacity 250ms, transform 250ms var(--ease-out);
+}
+.rail a:hover span, .rail a.active span { opacity: 1; transform: none; }
+.rail a.active i {
+  background: var(--red);
+  box-shadow: 0 0 10px var(--red-glow);
+  transform: scale(1.35);
+}
+
+/* second marquee row — ghost spec names, opposite direction */
+.marquee__track--rev {
+  animation-direction: reverse;
+  animation-duration: 46s;
+  margin-top: 16px;
+}
+.marquee__group--ghost span {
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(233, 235, 239, 0.22);
+}
+.marquee__group--ghost span:hover { color: transparent; -webkit-text-stroke-color: rgba(233, 235, 239, 0.5); }
+.marquee__group--ghost i { color: rgba(213, 0, 28, 0.5); font-size: 7px; }
+
+/* 3D tilt on cards (JS-driven) */
+.card { transition: background-color 350ms var(--ease-out), transform 250ms var(--ease-out); }
+
+/* odometer stats */
+.odo { display: inline-flex; }
+.odo-col {
+  display: inline-block;
+  height: 1.12em;
+  overflow: hidden;
+}
+.odo-strip {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(0);
+  transition: transform 1700ms var(--ease-in-out);
+}
+.odo-strip span {
+  display: block;
+  height: 1.12em;
+  line-height: 1.12;
+  background: var(--chrome-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 
 /* ═══════════ RESPONSIVE ═══════════ */
 @media (max-width: 1080px) {
