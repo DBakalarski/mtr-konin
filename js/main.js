@@ -80,13 +80,22 @@
     });
   }
 
-  /* ── card cursor sheen ─────────────────────────────────── */
+  /* ── card cursor sheen + 3D tilt ───────────────────────── */
+  const fine = matchMedia("(pointer: fine)").matches;
   document.querySelectorAll(".card").forEach((card) => {
     card.addEventListener("mousemove", (e) => {
       const r = card.getBoundingClientRect();
-      card.style.setProperty("--mx", `${e.clientX - r.left}px`);
-      card.style.setProperty("--my", `${e.clientY - r.top}px`);
+      const mx = e.clientX - r.left;
+      const my = e.clientY - r.top;
+      card.style.setProperty("--mx", `${mx}px`);
+      card.style.setProperty("--my", `${my}px`);
+      if (fine && !reduceMotion) {
+        const rx = (my / r.height - 0.5) * -5;
+        const ry = (mx / r.width - 0.5) * 5;
+        card.style.transform = `perspective(750px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
+      }
     });
+    card.addEventListener("mouseleave", () => { card.style.transform = ""; });
   });
 
   /* ═══════════ SIGNATURE: Road Force waveform ═══════════

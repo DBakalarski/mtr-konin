@@ -675,6 +675,7 @@ body.intro-done .line-mask [data-hero] {
   font-size: clamp(52px, 6vw, 84px);
   line-height: 1;
   margin-bottom: 14px;
+  white-space: nowrap;
 }
 .stat__label { color: var(--muted); font-size: 15px; max-width: 300px; }
 
@@ -764,6 +765,11 @@ body.intro-done .line-mask [data-hero] {
   transition: color 250ms, border-color 250ms, transform 250ms var(--ease-out);
 }
 .footer__up:hover { color: #fff; border-color: rgba(233,235,239,0.4); transform: translateY(-3px); }
+
+/* ═══════════ PREMIUM+ ═══════════ */
+
+/* 3D tilt on cards (JS-driven) — icons and content lean toward the cursor */
+.card { transition: background-color 350ms var(--ease-out), transform 250ms var(--ease-out); }
 
 /* ═══════════ RESPONSIVE ═══════════ */
 @media (max-width: 1080px) {
