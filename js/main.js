@@ -90,8 +90,8 @@
   });
 
   /* ═══════════ SIGNATURE: Road Force waveform ═══════════
-     A vibration trace that flattens into a clean line —
-     what road-force balancing does to your steering wheel. */
+     The story every canvas tells: measure → correct → balanced.
+     It restarts from the beginning each time it scrolls into view. */
 
   const setupCanvas = (canvas) => {
     const ctx = canvas.getContext("2d");
@@ -164,118 +164,135 @@
     return 1 + (RESIDUAL - 1) * p * p * (3 - 2 * p);
   };
 
-  /* hero wave — the story: measure → correct → balanced, and it stays balanced */
-  const heroCanvas = document.getElementById("waveHero");
-  const roVib = document.getElementById("roVib");
-  const roState = document.getElementById("roState");
-  const roPhase = document.getElementById("roPhase");
-  const setHeroResolved = () => {
-    if (roVib) { roVib.textContent = "0.00 g"; roVib.classList.add("ok"); }
-    if (roState) { roState.textContent = "— WYWAŻONE ✓"; roState.classList.add("ok"); }
-    if (roPhase) roPhase.textContent = "TEST DROGOWY · ZAKOŃCZONY";
-  };
-  if (heroCanvas && !reduceMotion) {
-    const ctx = setupCanvas(heroCanvas);
-    let visible = true;
-    new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(heroCanvas);
+  /* story runner: measure → fix → balanced (+ periodic re-check),
+     restarting whenever the canvas re-enters the viewport */
+  const runStory = (canvas, o) => {
+    const ctx = setupCanvas(canvas);
 
-    const MEASURE = 1.5;   // s of raw vibration, so the problem registers
-    const FIX = 2.8;       // s for the corrector to sweep and flatten
-    const RECHECK = 7;     // s between quality-control sweeps once balanced
+    if (reduceMotion) {
+      // show the end state — problem already solved
+      drawWave(ctx, canvas.offsetWidth, canvas.offsetHeight, 1.7, () => RESIDUAL, null);
+      o.onFixed();
+      return;
+    }
+
+    const RECHECK = 7;
     let start = null;
-    let resolved = false;
+    let phase = "";
+    let visible = false;
+    let ranOnce = false;
+
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !visible) { start = null; phase = ""; o.onRestart(); }
+      visible = e.isIntersecting;
+    }, { threshold: 0.3 }).observe(canvas);
 
     const loop = (now) => {
       requestAnimationFrame(loop);
       if (!visible) return;
-      // hold the story until the intro lifts and the wave has faded in
       if (start === null) {
-        if (!document.body.classList.contains("intro-done")) return;
-        start = now + 1500;
+        if (o.gate && !o.gate()) return;
+        start = now + (ranOnce ? 400 : o.firstDelay || 0);
+        ranOnce = true;
       }
       const t = now / 1000;
       const el = Math.max(0, (now - start) / 1000);
-      const w = heroCanvas.offsetWidth;
-      const h = heroCanvas.offsetHeight;
+      const w = canvas.offsetWidth;
+      const h = canvas.offsetHeight;
+      const total = o.measure + o.fix;
 
-      if (el < MEASURE) {
+      if (el < o.measure) {
+        if (phase !== "measure") { phase = "measure"; o.onMeasure(); }
         drawWave(ctx, w, h, t, () => 1, null);
-        if (roVib && Math.floor(t * 4) % 2 === 0) {
-          roVib.textContent = (0.36 + Math.abs(noise(10, t)) * 0.24).toFixed(2) + " g";
-        }
-      } else if (el < MEASURE + FIX) {
-        const p = (el - MEASURE) / FIX;
+        o.onTick(el / total, 0.36 + Math.abs(noise(10, t)) * 0.24);
+      } else if (el < total) {
+        const p = (el - o.measure) / o.fix;
+        if (phase !== "fix") { phase = "fix"; o.onFix(); }
         const eased = 1 - Math.pow(1 - p, 3);
         const scanX = eased * (w + 80);
         drawWave(ctx, w, h, t, sweepDamp(scanX), scanX);
-        if (roVib) roVib.textContent = (0.48 * (1 - eased)).toFixed(2) + " g";
-        if (roState && p > 0.15) roState.textContent = "— KOREKTA…";
-        if (roPhase) roPhase.textContent = "TEST DROGOWY · KOREKTA";
+        o.onTick(el / total, 0.48 * (1 - eased));
       } else {
-        if (!resolved) { resolved = true; setHeroResolved(); }
+        if (phase !== "fixed") { phase = "fixed"; o.onFixed(); }
         // balanced line stays balanced; a slow sweep re-checks it now and then
-        const since = el - MEASURE - FIX - 3;
+        const since = el - total - 3;
         const cycle = since >= 0 ? since % RECHECK : -1;
         const scanX = cycle >= 0 && cycle < 2.4 ? (cycle / 2.4) * (w + 80) : null;
         drawWave(ctx, w, h, t, () => RESIDUAL, scanX);
       }
     };
     requestAnimationFrame(loop);
-  } else if (heroCanvas) {
-    // reduced motion: show the end state — problem already solved
-    const ctx = setupCanvas(heroCanvas);
-    drawWave(ctx, heroCanvas.offsetWidth, heroCanvas.offsetHeight, 1.7, () => RESIDUAL, null);
-    setHeroResolved();
+  };
+
+  /* hero wave */
+  const heroCanvas = document.getElementById("waveHero");
+  if (heroCanvas) {
+    const vib = document.getElementById("roVib");
+    const state = document.getElementById("roState");
+    const phaseEl = document.getElementById("roPhase");
+    const progress = document.getElementById("waveProgress");
+    const bar = document.getElementById("waveBar");
+
+    runStory(heroCanvas, {
+      measure: 1.5,
+      fix: 2.8,
+      firstDelay: 1500,
+      gate: () => document.body.classList.contains("intro-done"),
+      onRestart() {
+        progress.classList.remove("done");
+        bar.style.width = "0";
+        vib.textContent = "0.48 g"; vib.classList.remove("ok");
+        state.textContent = "— WYKRYTO BICIE"; state.classList.remove("ok");
+        phaseEl.textContent = "TEST DROGOWY · POMIAR…"; phaseEl.classList.add("running");
+      },
+      onMeasure() {
+        phaseEl.textContent = "TEST DROGOWY · POMIAR…";
+      },
+      onFix() {
+        phaseEl.textContent = "TEST DROGOWY · KOREKTA…";
+        state.textContent = "— KOREKTA…";
+      },
+      onTick(p, g) {
+        bar.style.width = (Math.min(p, 1) * 100).toFixed(1) + "%";
+        vib.textContent = g.toFixed(2) + " g";
+      },
+      onFixed() {
+        if (bar) { bar.style.width = "100%"; progress.classList.add("done"); }
+        vib.textContent = "0.00 g"; vib.classList.add("ok");
+        state.textContent = "— WYWAŻONE ✓"; state.classList.add("ok");
+        phaseEl.textContent = "TEST DROGOWY · ZAKOŃCZONY"; phaseEl.classList.remove("running");
+      },
+    });
   }
 
-  /* tech wave — scroll-linked: vibration flattens as you read */
+  /* tech meter — same story, so it also works when the meter
+     isn't sticky (mobile): it plays itself when scrolled into view */
   const techCanvas = document.getElementById("waveTech");
-  const techVib = document.getElementById("techVib");
-  const techState = document.getElementById("techState");
-  const techSection = document.getElementById("technologia");
-  if (techCanvas && techSection) {
-    const ctx = setupCanvas(techCanvas);
-    let progress = 0;
-    let raf = null;
+  if (techCanvas) {
+    const vib = document.getElementById("techVib");
+    const state = document.getElementById("techState");
 
-    const render = (now) => {
-      raf = null;
-      const w = techCanvas.offsetWidth;
-      // reading the steps IS the correction: the head advances with scroll
-      const scanX = Math.min(progress * 1.7, 1) * (w + 80);
-      drawWave(ctx, w, techCanvas.offsetHeight, now / 1000, sweepDamp(scanX), scanX <= w ? scanX : null);
-      const damp = Math.max(0, 1 - Math.min(progress * 1.7, 1));
-      const g = 0.48 * damp;
-      techVib.textContent = g.toFixed(2) + " g";
-      const done = g < 0.03;
-      techState.textContent = done ? "— WYWAŻONE ✓" : progress > 0.05 ? "— KOREKTA…" : "— WYKRYTO BICIE";
-      techState.classList.toggle("ok", done);
-    };
-
-    const update = () => {
-      const r = techSection.getBoundingClientRect();
-      const total = r.height - window.innerHeight;
-      progress = Math.min(1, Math.max(0, -r.top / Math.max(total, 1)));
-      if (!raf) raf = requestAnimationFrame(render);
-    };
-
-    if (reduceMotion) {
-      drawWave(ctx, techCanvas.offsetWidth, techCanvas.offsetHeight, 1.7, () => RESIDUAL, null);
-      techVib.textContent = "0.00 g";
-      techState.textContent = "— WYWAŻONE ✓";
-      techState.classList.add("ok");
-    } else {
-      window.addEventListener("scroll", update, { passive: true });
-      window.addEventListener("resize", update);
-      update();
-      // gentle ambient motion while the section is on screen
-      let visible = false;
-      new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(techCanvas);
-      const ambient = (now) => {
-        if (visible && !raf) render(now);
-        requestAnimationFrame(ambient);
-      };
-      requestAnimationFrame(ambient);
-    }
+    runStory(techCanvas, {
+      measure: 1.3,
+      fix: 2.4,
+      firstDelay: 300,
+      onRestart() {
+        vib.textContent = "0.48 g";
+        state.textContent = "— WYKRYTO BICIE"; state.classList.remove("ok");
+      },
+      onMeasure() {
+        state.textContent = "— WYKRYTO BICIE";
+      },
+      onFix() {
+        state.textContent = "— KOREKTA…";
+      },
+      onTick(p, g) {
+        vib.textContent = g.toFixed(2) + " g";
+      },
+      onFixed() {
+        vib.textContent = "0.00 g";
+        state.textContent = "— WYWAŻONE ✓"; state.classList.add("ok");
+      },
+    });
   }
 })();
