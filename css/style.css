@@ -397,6 +397,8 @@ body.intro-done .line-mask [data-hero] {
 }
 .ro b { color: var(--text); font-weight: 500; margin-right: 8px; }
 .ro b::before { content: "▸ "; color: var(--red); }
+.ro .ok, #techState.ok { color: #37c877; }
+#roState, #roVib, #techState { transition: color 400ms; }
 
 .hero__scroll {
   position: absolute;

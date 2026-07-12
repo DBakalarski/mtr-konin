@@ -112,70 +112,120 @@
     Math.sin(x * 0.13 - t * 1.3) * 0.3 +
     Math.sin(x * 0.31 + t * 3.1) * 0.18;
 
-  const drawWave = (ctx, w, h, t, damp) => {
-    // damp: 1 = full vibration … 0 = perfectly flat
+  const RESIDUAL = 0.045; // a balanced wheel still isn't a laser line
+
+  const drawWave = (ctx, w, h, t, dampAt, scanX) => {
+    // dampAt(x): 1 = full vibration … RESIDUAL = balanced
     ctx.clearRect(0, 0, w, h);
     const mid = h / 2;
     const amp = h * 0.34;
 
-    // ghost trace (before)
+    // ghost trace — the "before" measurement, kept as evidence
     ctx.beginPath();
     for (let x = 0; x <= w; x += 3) {
-      const y = mid + noise(x, t * 0.6) * amp * 0.9;
+      const y = mid + noise(x, 1.7 + x * 0.001) * amp * 0.8 * (1 - (x / w) * 0.4);
       x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
     }
-    ctx.strokeStyle = "rgba(142,151,163,0.14)";
+    ctx.strokeStyle = "rgba(142,151,163,0.13)";
     ctx.lineWidth = 1;
     ctx.stroke();
 
-    // main trace: vibration on the left fades to flat on the right
+    // main trace — flattened wherever the balancer has already passed
     ctx.beginPath();
     for (let x = 0; x <= w; x += 2) {
-      const fade = 1 - x / w;                    // spatial envelope
-      const y = mid + noise(x, t) * amp * fade * damp;
+      const y = mid + noise(x, t) * amp * dampAt(x);
       x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
     }
     const grad = ctx.createLinearGradient(0, 0, w, 0);
-    grad.addColorStop(0, "rgba(213,0,28,0.95)");
+    grad.addColorStop(0, "rgba(213,0,28,0.9)");
     grad.addColorStop(0.55, "rgba(233,235,239,0.75)");
     grad.addColorStop(1, "rgba(233,235,239,0.95)");
     ctx.strokeStyle = grad;
     ctx.lineWidth = 1.6;
     ctx.stroke();
 
-    // scan marker sweeping across
-    const sx = ((t * 90) % (w + 160)) - 80;
-    const sg = ctx.createLinearGradient(sx - 60, 0, sx, 0);
-    sg.addColorStop(0, "rgba(213,0,28,0)");
-    sg.addColorStop(1, "rgba(213,0,28,0.5)");
-    ctx.fillStyle = sg;
-    ctx.fillRect(sx - 60, 0, 60, h);
-    ctx.fillStyle = "rgba(213,0,28,0.9)";
-    ctx.fillRect(sx, 0, 1.5, h);
+    // corrector head
+    if (scanX !== null && scanX >= -2 && scanX <= w + 2) {
+      const sg = ctx.createLinearGradient(scanX - 70, 0, scanX, 0);
+      sg.addColorStop(0, "rgba(213,0,28,0)");
+      sg.addColorStop(1, "rgba(213,0,28,0.45)");
+      ctx.fillStyle = sg;
+      ctx.fillRect(scanX - 70, 0, 70, h);
+      ctx.fillStyle = "rgba(213,0,28,0.9)";
+      ctx.fillRect(scanX, 0, 1.5, h);
+    }
   };
 
-  /* hero wave — ambient loop */
+  // smooth step between "still vibrating" and "already balanced"
+  const sweepDamp = (scanX, blend = 60) => (x) => {
+    if (x <= scanX - blend) return RESIDUAL;
+    if (x >= scanX) return 1;
+    const p = (scanX - x) / blend;
+    return 1 + (RESIDUAL - 1) * p * p * (3 - 2 * p);
+  };
+
+  /* hero wave — the story: measure → correct → balanced, and it stays balanced */
   const heroCanvas = document.getElementById("waveHero");
   const roVib = document.getElementById("roVib");
+  const roState = document.getElementById("roState");
+  const roPhase = document.getElementById("roPhase");
+  const setHeroResolved = () => {
+    if (roVib) { roVib.textContent = "0.00 g"; roVib.classList.add("ok"); }
+    if (roState) { roState.textContent = "— WYWAŻONE ✓"; roState.classList.add("ok"); }
+    if (roPhase) roPhase.textContent = "TEST DROGOWY · ZAKOŃCZONY";
+  };
   if (heroCanvas && !reduceMotion) {
     const ctx = setupCanvas(heroCanvas);
     let visible = true;
     new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(heroCanvas);
+
+    const MEASURE = 1.5;   // s of raw vibration, so the problem registers
+    const FIX = 2.8;       // s for the corrector to sweep and flatten
+    const RECHECK = 7;     // s between quality-control sweeps once balanced
+    let start = null;
+    let resolved = false;
+
     const loop = (now) => {
-      if (visible) {
-        const t = now / 1000;
-        drawWave(ctx, heroCanvas.offsetWidth, heroCanvas.offsetHeight, t, 1);
-        if (roVib && Math.floor(t * 4) % 2 === 0) {
-          roVib.textContent = (0.32 + Math.abs(noise(10, t)) * 0.3).toFixed(2);
-        }
-      }
       requestAnimationFrame(loop);
+      if (!visible) return;
+      // hold the story until the intro lifts and the wave has faded in
+      if (start === null) {
+        if (!document.body.classList.contains("intro-done")) return;
+        start = now + 1500;
+      }
+      const t = now / 1000;
+      const el = Math.max(0, (now - start) / 1000);
+      const w = heroCanvas.offsetWidth;
+      const h = heroCanvas.offsetHeight;
+
+      if (el < MEASURE) {
+        drawWave(ctx, w, h, t, () => 1, null);
+        if (roVib && Math.floor(t * 4) % 2 === 0) {
+          roVib.textContent = (0.36 + Math.abs(noise(10, t)) * 0.24).toFixed(2) + " g";
+        }
+      } else if (el < MEASURE + FIX) {
+        const p = (el - MEASURE) / FIX;
+        const eased = 1 - Math.pow(1 - p, 3);
+        const scanX = eased * (w + 80);
+        drawWave(ctx, w, h, t, sweepDamp(scanX), scanX);
+        if (roVib) roVib.textContent = (0.48 * (1 - eased)).toFixed(2) + " g";
+        if (roState && p > 0.15) roState.textContent = "— KOREKTA…";
+        if (roPhase) roPhase.textContent = "TEST DROGOWY · KOREKTA";
+      } else {
+        if (!resolved) { resolved = true; setHeroResolved(); }
+        // balanced line stays balanced; a slow sweep re-checks it now and then
+        const since = el - MEASURE - FIX - 3;
+        const cycle = since >= 0 ? since % RECHECK : -1;
+        const scanX = cycle >= 0 && cycle < 2.4 ? (cycle / 2.4) * (w + 80) : null;
+        drawWave(ctx, w, h, t, () => RESIDUAL, scanX);
+      }
     };
     requestAnimationFrame(loop);
   } else if (heroCanvas) {
-    // reduced motion: single static frame
+    // reduced motion: show the end state — problem already solved
     const ctx = setupCanvas(heroCanvas);
-    drawWave(ctx, heroCanvas.offsetWidth, heroCanvas.offsetHeight, 1.7, 1);
+    drawWave(ctx, heroCanvas.offsetWidth, heroCanvas.offsetHeight, 1.7, () => RESIDUAL, null);
+    setHeroResolved();
   }
 
   /* tech wave — scroll-linked: vibration flattens as you read */
@@ -190,12 +240,15 @@
 
     const render = (now) => {
       raf = null;
-      const damp = Math.max(0, 1 - progress * 1.15);
-      drawWave(ctx, techCanvas.offsetWidth, techCanvas.offsetHeight, now / 1000, damp);
+      const w = techCanvas.offsetWidth;
+      // reading the steps IS the correction: the head advances with scroll
+      const scanX = Math.min(progress * 1.7, 1) * (w + 80);
+      drawWave(ctx, w, techCanvas.offsetHeight, now / 1000, sweepDamp(scanX), scanX <= w ? scanX : null);
+      const damp = Math.max(0, 1 - Math.min(progress * 1.7, 1));
       const g = 0.48 * damp;
       techVib.textContent = g.toFixed(2) + " g";
-      const done = g < 0.05;
-      techState.textContent = done ? "— WYWAŻONE" : "— WYKRYTO BICIE";
+      const done = g < 0.03;
+      techState.textContent = done ? "— WYWAŻONE ✓" : progress > 0.05 ? "— KOREKTA…" : "— WYKRYTO BICIE";
       techState.classList.toggle("ok", done);
     };
 
@@ -207,9 +260,9 @@
     };
 
     if (reduceMotion) {
-      drawWave(ctx, techCanvas.offsetWidth, techCanvas.offsetHeight, 1.7, 0);
+      drawWave(ctx, techCanvas.offsetWidth, techCanvas.offsetHeight, 1.7, () => RESIDUAL, null);
       techVib.textContent = "0.00 g";
-      techState.textContent = "— WYWAŻONE";
+      techState.textContent = "— WYWAŻONE ✓";
       techState.classList.add("ok");
     } else {
       window.addEventListener("scroll", update, { passive: true });
